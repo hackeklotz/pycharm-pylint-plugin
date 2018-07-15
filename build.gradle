@@ -1,0 +1,19 @@
+plugins {
+  id "org.jetbrains.intellij" version "0.3.4"
+}
+apply plugin: 'java'
+
+version '0.1-SNAPSHOT'
+
+intellij.version=2018.1
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile 'com.google.guava:guava:23.0'
+  compile 'com.jsoniter:jsoniter:0.9.15'
+  testCompile 'junit:junit:4.12'
+  testCompile 'org.assertj:assertj-core:3.8.0'
+}

@@ -1,0 +1,42 @@
+[
+	{
+		"type": "convention",
+		"module": "parser",
+		"obj": "",
+		"line": 62,
+		"column": 0,
+		"path": "parser.py",
+		"symbol": "bad-continuation",
+		"message": "some problem"
+	},
+	{
+		"type": "warning",
+		"module": "parser",
+		"obj": "",
+		"line": 79,
+		"column": 0,
+		"path": "parser.py",
+		"symbol": "anomalous-backslash-in-string",
+		"message": "some warning"
+	},
+	{
+		"type": "error",
+		"module": "parser",
+		"obj": "",
+		"line": 6,
+		"column": 0,
+		"path": "parser.py",
+		"symbol": "import-error",
+		"message": ""
+	},
+	{
+		"type": "refactor",
+		"module": "parser",
+		"obj": "Parser",
+		"line": 34,
+		"column": 4,
+		"path": "parser.py",
+		"symbol": "no-self-use",
+		"message": ""
+	}
+]
