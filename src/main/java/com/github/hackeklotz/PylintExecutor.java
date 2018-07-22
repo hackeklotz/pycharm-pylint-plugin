@@ -19,13 +19,7 @@ public class PylintExecutor {
 	}
 
 	private InputStream executePylint(Path path, Path pylintPath, String commandLineParameters) {
-		logger.debug("Run Pylint on " + path);
-
-		ProcessBuilder processBuilder = new ProcessBuilder(pylintPath.toString(), "-f", "json",
-				commandLineParameters, path.toString());
 		try {
-			logger.info("Running command " + processBuilder.command().toString());
-			// Process process = processBuilder.start();
 			String command = pylintPath + " -f json " + commandLineParameters + " " + path;
 			logger.info("Running command " + command);
 			Process process = Runtime.getRuntime().exec(command);
