@@ -1,5 +1,6 @@
 package com.github.hackeklotz;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -13,12 +14,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 public class PylintInspector extends LocalInspectionTool {
+
+    private ThreadFactory threadFactory =
+            new ThreadFactoryBuilder().setNameFormat("PylintRunner-%d").build();
+    private ExecutorService executorService = Executors.newSingleThreadExecutor(threadFactory);
+    private volatile List<PylintError> pylintErrors = new ArrayList<>();
 
     @Override
     public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager,
                                          boolean isOnTheFly) {
+
         VirtualFile vFile = file.getVirtualFile();
 
         // Workaround for the fact, that sometimes the virtual file is a strange deprecated VirtualFileWindowImpl
@@ -31,8 +41,9 @@ public class PylintInspector extends LocalInspectionTool {
         Path pylintPath = Paths.get(properties.getValue("pylint.path"));
         String commandLineParameters = properties.getValue("pylint.commandLineParameters");
 
-        PylintExecutor executor = new PylintExecutor();
-        List<PylintError> errors = executor.execute(path, pylintPath, commandLineParameters);
+        executorService.submit(new PylintRunner(path, pylintPath, commandLineParameters));
+
+        List<PylintError> errors = pylintErrors;
         List<ProblemDescriptor> problemDescriptors = transformToProblemDescriptions(errors,
                 file, manager);
         return problemDescriptors.toArray(new ProblemDescriptor[0]);
@@ -48,4 +59,22 @@ public class PylintInspector extends LocalInspectionTool {
         return problemDescriptors;
     }
 
+    private class PylintRunner implements Runnable {
+
+        private Path path;
+        private Path pylintPath;
+        private String commandLineParameters;
+
+        public PylintRunner(Path path, Path pylintPath, String commandLineParameters) {
+            this.path = path;
+            this.pylintPath = pylintPath;
+            this.commandLineParameters = commandLineParameters;
+        }
+
+        @Override
+        public void run() {
+            PylintExecutor executor = new PylintExecutor();
+            pylintErrors = executor.execute(path, pylintPath, commandLineParameters);
+        }
+    }
 }
