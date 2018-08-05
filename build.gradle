@@ -5,7 +5,7 @@ apply plugin: 'java'
 
 version '0.1-SNAPSHOT'
 
-intellij.version=2018.1
+intellij.version=2018.2
 
 repositories {
   mavenCentral()
